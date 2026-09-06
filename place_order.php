@@ -40,14 +40,15 @@ if (!$stmt->execute()) {
 
 $order_id = $stmt->insert_id;
 
-// 2. Har item ko 'order_items' table mein save karna
-$itemStmt = $conn->prepare("INSERT INTO order_items (order_id, item_name, quantity, price) VALUES (?, ?, ?, ?)");
+// 2. Har item ko 'order_items' table mein save karna (portion_type - full/half - bhi save ho raha hai)
+$itemStmt = $conn->prepare("INSERT INTO order_items (order_id, item_name, quantity, price, portion_type) VALUES (?, ?, ?, ?, ?)");
 
 foreach ($items as $item) {
     $itemName = $item['name'];
     $quantity = $item['quantity'];
     $price = $item['price'];
-    $itemStmt->bind_param("isid", $order_id, $itemName, $quantity, $price);
+    $portionType = $item['portion_type'] ?? 'full'; // agar na bheja gaya ho to default 'full'
+    $itemStmt->bind_param("isids", $order_id, $itemName, $quantity, $price, $portionType);
     $itemStmt->execute();
 }
 
