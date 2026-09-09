@@ -1,6 +1,6 @@
 <?php
 // Fetches the list of delivered orders for a specific delivery boy within a given time period
-require_once 'db_connect.php';
+require_once 'config/db_connect.php';
 
 $delivery_boy_id = $_GET['delivery_boy_id'] ?? null;
 $period = $_GET['period'] ?? null;
