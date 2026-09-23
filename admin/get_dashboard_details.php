@@ -32,6 +32,10 @@ switch ($type) {
         $result = $conn->query("SELECT id, name, phone, email FROM delivery_boys ORDER BY id DESC");
         break;
 
+    case 'contact_messages':
+        $result = $conn->query("SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC");
+        break;
+
     default:
         echo json_encode(["success" => false, "message" => "Invalid type"]);
         exit();
