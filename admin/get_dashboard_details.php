@@ -1,51 +1,47 @@
 <?php
-require_once '../config/db_connect.php';
-
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
 header("Content-Type: application/json");
 
-$type = $_GET['type'] ?? null;
+require_once '../config/db_connect.php';
 
-if (!$type) {
-    echo json_encode(["success" => false, "message" => "Type is required"]);
-    exit();
+if (!isset($conn) && isset($db)) {
+    $conn = $db;
 }
 
+$type = isset($_GET['type']) ? $_GET['type'] : '';
+$data = [];
+
 switch ($type) {
-    case 'total_orders':
-        $result = $conn->query("SELECT id, full_name, phone, address, total_amount, status, payment_method, payment_status, delivery_status, created_at FROM orders ORDER BY created_at DESC");
-        break;
-
-    case 'total_deliveries':
-        $result = $conn->query("SELECT id, full_name, phone, address, total_amount, delivery_status, delivered_at FROM orders WHERE delivery_status = 'delivered' ORDER BY delivered_at DESC");
-        break;
-
-    case 'bulk_orders':
-        $result = $conn->query("SELECT id, full_name, phone, total_amount, created_at, status FROM bulk_orders ORDER BY created_at DESC");
-        break;
-
-    case 'memberships':
-        $result = $conn->query("SELECT id, full_name, phone, plan_type, created_at FROM memberships ORDER BY created_at DESC");
-        break;
-
-    case 'delivery_boys':
-        $result = $conn->query("SELECT id, name, phone, email FROM delivery_boys ORDER BY id DESC");
-        break;
-
     case 'contact_messages':
         $result = $conn->query("SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC");
         break;
 
+    case 'orders':
+    case 'total_orders':
+        $result = $conn->query("SELECT * FROM orders ORDER BY created_at DESC LIMIT 20");
+        break;
+
+    case 'deliveries':
+    case 'total_deliveries':
+        $result = $conn->query("SELECT * FROM orders WHERE status='delivered' ORDER BY created_at DESC LIMIT 20");
+        break;
+
+    case 'bulk_orders':
+        $result = $conn->query("SELECT * FROM bulk_orders ORDER BY created_at DESC LIMIT 20");
+        break;
+
     default:
-        echo json_encode(["success" => false, "message" => "Invalid type"]);
-        exit();
+        $result = false;
+        break;
 }
 
-$rows = [];
-while ($row = $result->fetch_assoc()) {
-    $rows[] = $row;
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+    echo json_encode(["success" => true, "data" => $data]);
+} else {
+    echo json_encode(["success" => true, "data" => []]);
 }
-
-echo json_encode(["success" => true, "data" => $rows]);
-$conn->close();
 ?>

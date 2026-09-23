@@ -1,30 +1,45 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: *");
 header("Content-Type: application/json");
-
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 require_once '../config/db_connect.php';
 
+if (!isset($conn) && isset($db)) {
+    $conn = $db;
+}
+
 $stats = [];
 
-$stats['total_orders'] = $conn->query("SELECT COUNT(*) as c FROM orders")->fetch_assoc()['c'];
+// Total Orders
+$res = $conn->query("SELECT COUNT(*) as c FROM orders");
+$stats['total_orders'] = $res ? $res->fetch_assoc()['c'] : 0;
 
-$stats['total_bulk_orders'] = $conn->query("SELECT COUNT(*) as c FROM bulk_orders")->fetch_assoc()['c'];
+// Total Deliveries
+$res = $conn->query("SELECT COUNT(*) as c FROM orders WHERE status='delivered'");
+$stats['total_deliveries'] = $res ? $res->fetch_assoc()['c'] : 0;
 
-$stats['total_memberships'] = $conn->query("SELECT COUNT(*) as c FROM memberships")->fetch_assoc()['c'];
+// Bulk Orders
+$res = $conn->query("SELECT COUNT(*) as c FROM bulk_orders");
+$stats['bulk_orders'] = $res ? $res->fetch_assoc()['c'] : 0;
 
-$stats['total_delivered'] = $conn->query("SELECT COUNT(*) as c FROM orders WHERE status = 'delivered'")->fetch_assoc()['c'];
+// Membership Offers
+$res = $conn->query("SELECT COUNT(*) as c FROM memberships");
+$stats['membership_offers'] = $res ? $res->fetch_assoc()['c'] : 0;
 
-$stats['total_delivery_boys'] = $conn->query("SELECT COUNT(*) as c FROM delivery_boys")->fetch_assoc()['c'];
+// Delivery Partners
+$res = $conn->query("SELECT COUNT(*) as c FROM delivery_partners");
+$stats['delivery_partners'] = $res ? $res->fetch_assoc()['c'] : 0;
 
-$stats['total_revenue'] = $conn->query("SELECT SUM(total_amount) as s FROM orders WHERE status != 'cancelled'")->fetch_assoc()['s'] ?? 0;
+// Contact Messages Count
+$res = $conn->query("SELECT COUNT(*) as c FROM contact_messages");
+$stats['total_messages'] = $res ? $res->fetch_assoc()['c'] : 0;
+$stats['contact_messages'] = $stats['total_messages']; // Fallback key
 
-echo json_encode(["success" => true, "stats" => $stats]);
-$conn->close();
+// Total Revenue
+$res = $conn->query("SELECT SUM(total_amount) as total FROM orders");
+$row = $res ? $res->fetch_assoc() : null;
+$stats['total_revenue'] = $row && $row['total'] ? $row['total'] : 0;
+
+echo json_encode(["success" => true, "data" => $stats]);
 ?>
