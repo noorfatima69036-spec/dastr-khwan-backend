@@ -1,3 +1,5 @@
+
+text/x-generic db_connect.php ( PHP script, UTF-8 Unicode text )
 <?php
 // db_connect.php
 // Yeh file database se connection banati hai — har API ise use karegi
@@ -14,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $host = "localhost";
-$dbname = "dastr_khwan";
-$username = "root";   // XAMPP ka default username
-$password = "";        // XAMPP ka default password (khali hota hai)
+$dbname = "dastasga_dastrkhwan";
+$username = "dastasga_dastasga_dbuser";  
+$password = 'K8#mP!9x$Dastr2026';      
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
