@@ -14,21 +14,32 @@ $data = [];
 
 switch ($type) {
     case 'contact_messages':
-        $result = $conn->query("SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC");
+        $result = $conn->query("SELECT id, name, email, message, created_at FROM contact_messages ORDER BY id DESC LIMIT 20");
         break;
 
     case 'orders':
     case 'total_orders':
-        $result = $conn->query("SELECT * FROM orders ORDER BY created_at DESC LIMIT 20");
+        $result = $conn->query("SELECT * FROM orders ORDER BY id DESC LIMIT 20");
         break;
 
     case 'deliveries':
     case 'total_deliveries':
-        $result = $conn->query("SELECT * FROM orders WHERE status='delivered' ORDER BY created_at DESC LIMIT 20");
+        $result = $conn->query("SELECT * FROM orders WHERE status='delivered' ORDER BY id DESC LIMIT 20");
         break;
 
     case 'bulk_orders':
-        $result = $conn->query("SELECT * FROM bulk_orders ORDER BY created_at DESC LIMIT 20");
+        $result = $conn->query("SELECT * FROM bulk_orders ORDER BY id DESC LIMIT 20");
+        break;
+
+    case 'memberships':
+       
+        $result = $conn->query("SELECT * FROM memberships ORDER BY id DESC LIMIT 20");
+        break;
+
+    case 'delivery_boys':
+    case 'delivery_partners':
+        
+        $result = $conn->query("SELECT id, name, phone, email, status FROM delivery_boys ORDER BY id DESC LIMIT 20");
         break;
 
     default:
@@ -36,12 +47,13 @@ switch ($type) {
         break;
 }
 
-if ($result) {
+if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;
     }
     echo json_encode(["success" => true, "data" => $data]);
 } else {
+    // Return empty array with success true so frontend doesn't break
     echo json_encode(["success" => true, "data" => []]);
 }
 ?>

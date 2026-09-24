@@ -28,8 +28,8 @@ $res = $conn->query("SELECT COUNT(*) as c FROM memberships");
 $stats['membership_offers'] = $res ? $res->fetch_assoc()['c'] : 0;
 
 // Delivery Partners
-$res = $conn->query("SELECT COUNT(*) as c FROM delivery_partners");
-$stats['delivery_partners'] = $res ? $res->fetch_assoc()['c'] : 0;
+$res = $conn->query("SELECT COUNT(*) as c FROM delivery_boys");
+$stats['delivery_boys'] = $res ? $res->fetch_assoc()['c'] : 0;
 
 // Contact Messages Count
 $res = $conn->query("SELECT COUNT(*) as c FROM contact_messages");

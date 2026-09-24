@@ -1,5 +1,3 @@
-
-text/x-generic db_connect.php ( PHP script, UTF-8 Unicode text )
 <?php
 // db_connect.php
 // Yeh file database se connection banati hai — har API ise use karegi
