@@ -32,14 +32,13 @@ switch ($type) {
         break;
 
     case 'memberships':
-       
         $result = $conn->query("SELECT * FROM memberships ORDER BY id DESC LIMIT 20");
         break;
 
     case 'delivery_boys':
     case 'delivery_partners':
-        
-        $result = $conn->query("SELECT id, name, phone, email, status FROM delivery_boys ORDER BY id DESC LIMIT 20");
+        // Table ka naam delivery_boys hai
+        $result = $conn->query("SELECT * FROM delivery_boys ORDER BY id DESC LIMIT 20");
         break;
 
     default:
@@ -53,7 +52,6 @@ if ($result && $result->num_rows > 0) {
     }
     echo json_encode(["success" => true, "data" => $data]);
 } else {
-    // Return empty array with success true so frontend doesn't break
     echo json_encode(["success" => true, "data" => []]);
 }
 ?>
